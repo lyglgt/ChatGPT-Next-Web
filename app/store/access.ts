@@ -29,11 +29,6 @@ const DEFAULT_ACCESS_STATE = {
   azureApiKey: "",
   azureApiVersion: "2023-08-01-preview",
 
-  // google ai studio
-  googleUrl: "",
-  googleApiKey: "",
-  googleApiVersion: "v1",
-
   // server config
   needCode: true,
   hideUserApiKey: false,
@@ -61,10 +56,6 @@ export const useAccessStore = createPersistStore(
       return ensure(get(), ["azureUrl", "azureApiKey", "azureApiVersion"]);
     },
 
-    isValidGoogle() {
-      return ensure(get(), ["googleApiKey"]);
-    },
-
     isAuthorized() {
       this.fetch();
 
@@ -72,7 +63,6 @@ export const useAccessStore = createPersistStore(
       return (
         this.isValidOpenAI() ||
         this.isValidAzure() ||
-        this.isValidGoogle() ||
         !this.enabledAccessControl() ||
         (this.enabledAccessControl() && ensure(get(), ["accessCode"]))
       );
@@ -109,7 +99,6 @@ export const useAccessStore = createPersistStore(
           token: string;
           openaiApiKey: string;
           azureApiVersion: string;
-          googleApiKey: string;
         };
         state.openaiApiKey = state.token;
         state.azureApiVersion = "2023-08-01-preview";
