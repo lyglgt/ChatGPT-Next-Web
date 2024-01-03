@@ -6,27 +6,23 @@ export function collectModelTable(
 ) {
   const modelTable: Record<
     string,
-    {
-      available: boolean;
-      name: string;
-      displayName: string;
-      provider?: LLMModel["provider"]; // Marked as optional
-    }
+    { available: boolean; name: string; displayName: string }
   > = {};
 
   // default models
-  models.forEach((m) => {
-    modelTable[m.name] = {
-      ...m,
-      displayName: m.name, // 'provider' is copied over if it exists
-    };
-  });
+  models.forEach(
+    (m) =>
+      (modelTable[m.name] = {
+        ...m,
+        displayName: m.name,
+      }),
+  );
 
   // server custom models
   customModels
     .split(",")
     .filter((v) => !!v && v.length > 0)
-    .forEach((m) => {
+    .map((m) => {
       const available = !m.startsWith("-");
       const nameConfig =
         m.startsWith("+") || m.startsWith("-") ? m.slice(1) : m;
@@ -34,15 +30,14 @@ export function collectModelTable(
 
       // enable or disable all models
       if (name === "all") {
-        Object.values(modelTable).forEach((model) => (model.available = available));
-      } else {
-        modelTable[name] = {
-          name,
-          displayName: displayName || name,
-          available,
-          provider: modelTable[name]?.provider, // Use optional chaining
-        };
+        Object.values(modelTable).forEach((m) => (m.available = available));
       }
+
+      modelTable[name] = {
+        name,
+        displayName: displayName || name,
+        available,
+      };
     });
   return modelTable;
 }
